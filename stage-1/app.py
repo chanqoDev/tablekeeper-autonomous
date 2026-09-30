@@ -167,16 +167,17 @@ def validate_import_state(s):
     refs=set(); resids=set()
     for x in s['reservations']:
         if not isinstance(x,dict) or not all(k in x for k in ('id','reference','user_id','restaurant_id','table_id','party_size','starts_at_local','status','created_at')): fail(422,'validation_failed')
-        if not valid_id(x['id']) or not valid_id(x['reference']) or x['id'] in resids or x['reference'] in refs or x['user_id'] not in ids or x['restaurant_id'] not in rids: fail(422,'validation_failed')
+        if not valid_id(x['id']) or not valid_id(x['reference']) or not valid_id(x['user_id']) or not valid_id(x['restaurant_id']) or not valid_id(x['table_id']) or x['id'] in resids or x['reference'] in refs or x['user_id'] not in ids or x['restaurant_id'] not in rids: fail(422,'validation_failed')
         r=next(q for q in restaurants if q['id']==x['restaurant_id'])
         if not any(t['id']==x['table_id'] for t in r['tables']) or x['status'] not in ('confirmed','cancelled') or not isinstance(x['party_size'],int) or isinstance(x['party_size'],bool) or x['party_size']<1 or not isinstance(x['created_at'],str): fail(422,'validation_failed')
         parse_stamp(x['starts_at_local'],r['timezone']); resids.add(x['id']); refs.add(x['reference'])
-    if any(not isinstance(token,str) or not isinstance(owner,str) or owner not in ids for token,owner in s['tokens'].items()): fail(422,'validation_failed')
+    if any(not isinstance(token,str) or not valid_id(owner) or owner not in ids for token,owner in s['tokens'].items()): fail(422,'validation_failed')
     receipt_keys=set()
     for q in s['receipts']:
         if not isinstance(q,dict) or not all(k in q for k in ('user_id','key','method','path','body','response')): fail(422,'validation_failed')
+        if not valid_id(q['user_id']) or not isinstance(q['key'],str) or not 1<=len(q['key'])<=255 or not isinstance(q['method'],str) or not isinstance(q['path'],str) or not isinstance(q['body'],str) or not isinstance(q['response'],dict): fail(422,'validation_failed')
         identity=(q['user_id'],q['key'],q['method'],q['path'])
-        if q['user_id'] not in ids or not isinstance(q['key'],str) or not 1<=len(q['key'])<=255 or not isinstance(q['method'],str) or not isinstance(q['path'],str) or not isinstance(q['body'],str) or not isinstance(q['response'],dict) or identity in receipt_keys: fail(422,'validation_failed')
+        if q['user_id'] not in ids or identity in receipt_keys: fail(422,'validation_failed')
         try:
             if not isinstance(json.loads(q['body']),dict): fail(422,'validation_failed')
         except ApiError: raise
