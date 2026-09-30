@@ -115,24 +115,81 @@ def new_res(s,uid,r,tid,party,local,existing=None):
     s['reservations'].append(x); return x
 def validate_fixture(f):
     if not isinstance(f,dict) or not all(isinstance(f.get(k),list) for k in ('users','restaurants','reservations')): fail(422,'validation_failed')
-    ids=[]
+    uids=[]; rids=[]; emails=set()
     for u in f['users']:
         if not isinstance(u,dict) or not valid_id(u.get('id')) or not isinstance(u.get('email'),str) or not isinstance(u.get('password'),str) or not isinstance(u.get('display_name'),str): fail(422,'validation_failed')
-        ids.append(u['id'])
+        if u['id'] in uids or u['email'].lower() in emails: fail(422,'validation_failed')
+        uids.append(u['id']); emails.add(u['email'].lower())
     for r in f['restaurants']:
-        if not isinstance(r,dict) or not valid_id(r.get('id')): fail(422,'validation_failed')
+        if not isinstance(r,dict) or not valid_id(r.get('id')) or not isinstance(r.get('name'),str): fail(422,'validation_failed')
+        if r['id'] in rids: fail(422,'validation_failed')
+        rids.append(r['id'])
         try: ZoneInfo(r['timezone'])
         except Exception: fail(422,'validation_failed')
         for k in ('slot_minutes','reservation_duration_minutes','cancellation_cutoff_minutes'):
             if not isinstance(r.get(k),int) or isinstance(r[k],bool) or r[k]<0 or k in ('slot_minutes','reservation_duration_minutes') and r[k]==0: fail(422,'validation_failed')
         if not isinstance(r.get('tables'),list) or not isinstance(r.get('opening_hours'),list): fail(422,'validation_failed')
+        table_ids=set(); weekdays=set()
         for t in r['tables']:
-            if not valid_id(t.get('id')) or not isinstance(t.get('capacity'),int) or isinstance(t.get('capacity'),bool) or t['capacity']<1: fail(422,'validation_failed')
+            if not isinstance(t,dict) or not valid_id(t.get('id')) or not isinstance(t.get('label'),str) or not isinstance(t.get('capacity'),int) or isinstance(t.get('capacity'),bool) or t['capacity']<1 or t['id'] in table_ids: fail(422,'validation_failed')
+            table_ids.add(t['id'])
+        for oh in r['opening_hours']:
+            if not isinstance(oh,dict) or oh.get('weekday') not in WDAYS or oh['weekday'] in weekdays or not isinstance(oh.get('opens'),str) or not isinstance(oh.get('closes'),str): fail(422,'validation_failed')
+            weekdays.add(oh['weekday'])
+            try: op=time.fromisoformat(oh['opens']); cl=time.fromisoformat(oh['closes'])
+            except Exception: fail(422,'validation_failed')
+            if op>=cl or len(oh['opens'])!=5 or len(oh['closes'])!=5: fail(422,'validation_failed')
+    for x in f['reservations']:
+        if not isinstance(x,dict): fail(422,'validation_failed')
+        if not all(k in x for k in ('id','reference','user_id','restaurant_id','table_id','party_size','starts_at_local')): fail(422,'validation_failed')
+        if not valid_id(x['id']) or not valid_id(x['reference']) or x['user_id'] not in uids: fail(422,'validation_failed')
+        if not isinstance(x['party_size'],int) or isinstance(x['party_size'],bool) or x['party_size']<1: fail(422,'validation_failed')
+        r=next((q for q in f['restaurants'] if q['id']==x['restaurant_id']),None)
+        if not r or not any(t['id']==x['table_id'] for t in r['tables']): fail(422,'validation_failed')
+        if x.get('status','confirmed')!='confirmed': fail(422,'validation_failed')
+        if 'created_at' in x and not isinstance(x['created_at'],str): fail(422,'validation_failed')
+        parse_stamp(x['starts_at_local'],r['timezone'])
+    return True
+
+def validate_import_state(s):
+    if not isinstance(s,dict) or not all(isinstance(s.get(k),list) for k in ('users','restaurants','reservations')) or not isinstance(s.get('tokens'),dict) or not isinstance(s.get('receipts'),list): fail(422,'validation_failed')
+    ids=set(); emails=set()
+    for u in s['users']:
+        if not isinstance(u,dict) or not valid_id(u.get('id')) or not isinstance(u.get('email'),str) or not isinstance(u.get('password_hash'),str) or not isinstance(u.get('display_name'),str): fail(422,'validation_failed')
+        if u['id'] in ids or u['email'] in emails: fail(422,'validation_failed')
+        ids.add(u['id']); emails.add(u['email'])
+    restaurants=s['restaurants']; rids=set()
+    for r in restaurants:
+        if not isinstance(r,dict): fail(422,'validation_failed')
+        validate_fixture({'users':[],'restaurants':[r],'reservations':[]})
+        if r['id'] in rids: fail(422,'validation_failed')
+        rids.add(r['id'])
+    refs=set(); resids=set()
+    for x in s['reservations']:
+        if not isinstance(x,dict) or not all(k in x for k in ('id','reference','user_id','restaurant_id','table_id','party_size','starts_at_local','status','created_at')): fail(422,'validation_failed')
+        if not valid_id(x['id']) or not valid_id(x['reference']) or x['id'] in resids or x['reference'] in refs or x['user_id'] not in ids or x['restaurant_id'] not in rids: fail(422,'validation_failed')
+        r=next(q for q in restaurants if q['id']==x['restaurant_id'])
+        if not any(t['id']==x['table_id'] for t in r['tables']) or x['status'] not in ('confirmed','cancelled') or not isinstance(x['party_size'],int) or isinstance(x['party_size'],bool) or x['party_size']<1 or not isinstance(x['created_at'],str): fail(422,'validation_failed')
+        parse_stamp(x['starts_at_local'],r['timezone']); resids.add(x['id']); refs.add(x['reference'])
+    if any(not isinstance(token,str) or not isinstance(owner,str) or owner not in ids for token,owner in s['tokens'].items()): fail(422,'validation_failed')
+    receipt_keys=set()
+    for q in s['receipts']:
+        if not isinstance(q,dict) or not all(k in q for k in ('user_id','key','method','path','body','response')): fail(422,'validation_failed')
+        pair=(q['user_id'],q['key'])
+        if q['user_id'] not in ids or not isinstance(q['key'],str) or not 1<=len(q['key'])<=255 or pair in receipt_keys or not isinstance(q['method'],str) or not isinstance(q['path'],str) or not isinstance(q['body'],str) or not isinstance(q['response'],dict): fail(422,'validation_failed')
+        try:
+            if not isinstance(json.loads(q['body']),dict): fail(422,'validation_failed')
+        except ApiError: raise
+        except Exception: fail(422,'validation_failed')
+        receipt_keys.add(pair)
     return True
 
 class Handler(BaseHTTPRequestHandler):
     protocol_version='HTTP/1.1'
     def log_message(self,*args): pass
+    def send_error(self,code,message=None,explain=None):
+        text=message or 'request error'
+        self.send(code,{'error':{'code':'malformed_request' if code==400 else 'not_found','message':text}})
     def send(self,status,obj=None):
         data=b'' if status==204 else json.dumps(obj,separators=(',',':'),ensure_ascii=False).encode()
         self.send_response(status); self.send_header('Content-Type','application/json; charset=utf-8'); self.send_header('Content-Length',str(len(data))); self.end_headers()
@@ -144,6 +201,10 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self): self.dispatch()
     def do_POST(self): self.dispatch()
     def do_PATCH(self): self.dispatch()
+    def do_PUT(self): self.dispatch()
+    def do_DELETE(self): self.dispatch()
+    def do_OPTIONS(self): self.dispatch()
+    def do_HEAD(self): self.dispatch()
     def dispatch(self):
         if not self.path.startswith('/'): return
         try:
@@ -156,7 +217,8 @@ class Handler(BaseHTTPRequestHandler):
         method=self.command; path=urlparse(self.path).path; qs=parse_qs(urlparse(self.path).query,keep_blank_values=True)
         public=path in ('/health','/_test/reset','/_test/import','/_test/export','/auth/signup','/auth/login','/restaurants','/availability') or re.fullmatch(r'/restaurants/[^/]+',path)
         s=state(); uid=None; obj=None
-        if method in ('POST','PATCH') and path not in ('/health',): obj=self.readbody()
+        wants_body=method=='PATCH' or method=='POST' and (path in ('/_test/reset','/_test/import','/auth/signup','/auth/login','/reservations','/reservation-moves'))
+        if wants_body: obj=self.readbody()
         if not public: uid=auth(self,s)
         if path=='/health' and method=='GET': return 200,{'status':'ok'}
         if path=='/_test/reset' and method=='POST':
@@ -170,9 +232,8 @@ class Handler(BaseHTTPRequestHandler):
             save(ns); return 204,None
         if path=='/_test/export' and method=='GET': return 200,{'track':'tablekeeper','format_version':1,'state':s}
         if path=='/_test/import' and method=='POST':
-            if obj.get('track')!='tablekeeper' or obj.get('format_version')!=1 or not isinstance(obj.get('state'),dict): fail(422,'validation_failed')
-            ns=obj['state']
-            if not all(isinstance(ns.get(k),list) for k in ('users','restaurants','reservations')) or not isinstance(ns.get('tokens'),dict) or not isinstance(ns.get('receipts'),list): fail(422,'validation_failed')
+            if obj.get('track')!='tablekeeper' or obj.get('format_version')!=1: fail(422,'validation_failed')
+            ns=obj.get('state'); validate_import_state(ns)
             save(ns); return 204,None
         if path=='/auth/signup' and method=='POST':
             email=body_type(obj,'email',str).lower(); pw=body_type(obj,'password',str); name=body_type(obj,'display_name',str)
