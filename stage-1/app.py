@@ -254,18 +254,23 @@ class Handler(BaseHTTPRequestHandler):
             if any(k not in qs for k in ('restaurant_id','date','party_size')): fail(422,'validation_failed')
             rid=qs['restaurant_id'][0]; ds=qs['date'][0]; ps=qs['party_size'][0]
             if not re.fullmatch(r'\d+',ps) or int(ps)<1: fail(422,'validation_failed')
+            if not re.fullmatch(r'\d{4}-\d{2}-\d{2}',ds): fail(422,'validation_failed')
             try: day=date.fromisoformat(ds)
             except Exception: fail(422,'validation_failed')
             r=restaurant(s,rid); oh=opening(r,day); slots=[]
             if oh:
                 opens=datetime.combine(day,time.fromisoformat(oh['opens'])); closes=datetime.combine(day,time.fromisoformat(oh['closes']))
+                close_local=day.strftime('%Y-%m-%dT')+oh['closes']
+                close_utc=parse_stamp(close_local,r['timezone']).astimezone(timezone.utc)
                 naive=opens
-                while naive+timedelta(minutes=r['reservation_duration_minutes'])<=closes:
+                while naive<closes:
                     local=naive.strftime('%Y-%m-%dT%H:%M')
                     try: start=parse_stamp(local,r['timezone']); a=start.astimezone(timezone.utc); b=a+timedelta(minutes=r['reservation_duration_minutes']); avail=[]
                     except ApiError as e:
                         if e.code=='invalid_local_time': naive+=timedelta(minutes=r['slot_minutes']); continue
                         raise
+                    if b>close_utc:
+                        naive+=timedelta(minutes=r['slot_minutes']); continue
                     for t in r['tables']:
                         if t['capacity']<int(ps): continue
                         busy=False
@@ -342,13 +347,12 @@ class Handler(BaseHTTPRequestHandler):
             if not x: fail(404,'not_found')
             rows.append(x)
         if len({x['restaurant_id'] for x in rows})!=1: fail(422,'validation_failed')
-        for x in rows:
-            if x['status']=='cancelled': fail(409,'reservation_cancelled')
         self.validate_extra({}, {})
         cloned=json.loads(json.dumps(s)); rows=[next(q for q in cloned['reservations'] if q['id']==x['id']) for x in rows]; ids=[x['id'] for x in rows]
         # Validate in request order against all non-listed bookings, then pairwise resulting occupancy.
         candidates=[]
         for item,x in zip(moves,rows):
+            if x['status']=='cancelled': fail(409,'reservation_cancelled')
             r0=restaurant(cloned,x['restaurant_id']); start,_=res_times(x,r0)
             if datetime.now(timezone.utc)>=start-timedelta(minutes=r0['cancellation_cutoff_minutes']): fail(409,'cutoff_passed')
             data={**x,**{k:v for k,v in item.items() if k in ('table_id','starts_at_local','party_size')}}
