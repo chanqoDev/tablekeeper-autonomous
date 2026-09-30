@@ -175,13 +175,13 @@ def validate_import_state(s):
     receipt_keys=set()
     for q in s['receipts']:
         if not isinstance(q,dict) or not all(k in q for k in ('user_id','key','method','path','body','response')): fail(422,'validation_failed')
-        pair=(q['user_id'],q['key'])
-        if q['user_id'] not in ids or not isinstance(q['key'],str) or not 1<=len(q['key'])<=255 or pair in receipt_keys or not isinstance(q['method'],str) or not isinstance(q['path'],str) or not isinstance(q['body'],str) or not isinstance(q['response'],dict): fail(422,'validation_failed')
+        identity=(q['user_id'],q['key'],q['method'],q['path'])
+        if q['user_id'] not in ids or not isinstance(q['key'],str) or not 1<=len(q['key'])<=255 or not isinstance(q['method'],str) or not isinstance(q['path'],str) or not isinstance(q['body'],str) or not isinstance(q['response'],dict) or identity in receipt_keys: fail(422,'validation_failed')
         try:
             if not isinstance(json.loads(q['body']),dict): fail(422,'validation_failed')
         except ApiError: raise
         except Exception: fail(422,'validation_failed')
-        receipt_keys.add(pair)
+        receipt_keys.add(identity)
     return True
 
 class Handler(BaseHTTPRequestHandler):
@@ -316,9 +316,9 @@ class Handler(BaseHTTPRequestHandler):
         if key is None or key=='': fail(400,'missing_idempotency_key')
         if len(key)>255: fail(422,'validation_failed')
         canonical=json.dumps(obj,sort_keys=True,separators=(',',':'))
-        existing=next((x for x in s['receipts'] if x['user_id']==uid and x['key']==key),None)
+        existing=next((x for x in s['receipts'] if x['user_id']==uid and x['key']==key and x['method']==method and x['path']==path),None)
         if existing:
-            if existing['method']!=method or existing['path']!=path or existing['body']!=canonical: fail(409,'idempotency_key_reuse')
+            if existing['body']!=canonical: fail(409,'idempotency_key_reuse')
             return 200,existing['response']
         try: status,response=operation()
         except ApiError: raise
