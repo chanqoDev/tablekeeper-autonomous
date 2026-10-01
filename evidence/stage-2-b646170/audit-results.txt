@@ -1,0 +1,12 @@
+Independent Stage 2 audit
+Revision: b646170cbd5feb41a37a36e1000706880c368b77
+Checkout: /tmp/tablekeeper-stage2-b646170-20261001-verifier-unique/checkout (detached, clean)
+Stage 1 comparison: stage-1/ identical to d05dedc85791cae49d347e33827ed27d0cf785a9
+Revision delta: stage-2/app.js only. Editing the party-size input clears confirmation state and removes the rendered stale confirmation; no discrepancy found in this change.
+Independent review: carried forward the complete Stage 1 + Stage 2 spec review from 601c11f; the exact-revision delta does not alter API, combo, import/upgrade, concurrency or unrelated UI behavior. No outstanding spec findings.
+Static checks: git diff --check, node --check stage-2/app.js, python3 -m py_compile stage-2/app.py passed.
+Official isolated harness: Stage 1 120/120 passed; Stage 2 25/25 passed; 0 failures/errors; highest_contiguous=2; state=completed.
+Report: /tmp/tablekeeper-stage2-b646170-20261001-verifier-unique/harness-run-01/report.json
+Stage 1 log/counts: .../harness-run-01/stage-1.log, .../stage-1.counts.json
+Stage 2 log/counts: .../harness-run-01/stage-2.log, .../stage-2.counts.json
+The harness printed an automatic Stage 3 overshoot failure after claimed Stage 2; it is outside acceptance, and no Stage 3 implementation was attempted.
