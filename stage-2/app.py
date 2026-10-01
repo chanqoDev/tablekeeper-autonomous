@@ -304,7 +304,7 @@ class Handler(BaseHTTPRequestHandler):
             for u in obj['users']: ns['users'].append({'id':u['id'],'email':u['email'].lower(),'password_hash':hashpw(u['password']),'display_name':u['display_name']})
             for rr in obj['reservations']:
                 x={**rr,'user_id':rr.get('user_id'),'status':rr.get('status','confirmed')}
-                if not all(k in x for k in ('id','reference','user_id','restaurant_id','table_id','party_size','starts_at_local')): fail(422,'validation_failed')
+                if not all(k in x for k in ('id','reference','user_id','restaurant_id','party_size','starts_at_local')) or not ('table_id' in x or 'table_ids' in x): fail(422,'validation_failed')
                 x.setdefault('created_at',datetime.now(timezone.utc).isoformat(timespec='seconds')); ns['reservations'].append(x)
             save(ns); return 204,None
         if path=='/_test/export' and method=='GET': return 200,{'track':'tablekeeper','format_version':1,'state':s}
