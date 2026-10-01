@@ -45,6 +45,7 @@ def parse_json(raw):
         return x
     except Exception: fail(400,'malformed_request')
 def valid_id(v): return isinstance(v,str) and 0<len(v)<=64
+def valid_reference(v): return isinstance(v,str) and re.fullmatch(r'[A-Z0-9]{6,12}',v) is not None
 def body_type(obj,key,typ,required=True):
     if key not in obj:
         if required: fail(422,'validation_failed')
@@ -139,16 +140,18 @@ def validate_fixture(f):
             try: op=time.fromisoformat(oh['opens']); cl=time.fromisoformat(oh['closes'])
             except Exception: fail(422,'validation_failed')
             if op>=cl or len(oh['opens'])!=5 or len(oh['closes'])!=5: fail(422,'validation_failed')
+    reservation_ids=set(); reservation_refs=set()
     for x in f['reservations']:
         if not isinstance(x,dict): fail(422,'validation_failed')
         if not all(k in x for k in ('id','reference','user_id','restaurant_id','table_id','party_size','starts_at_local')): fail(422,'validation_failed')
-        if not valid_id(x['id']) or not valid_id(x['reference']) or x['user_id'] not in uids: fail(422,'validation_failed')
+        if not valid_id(x['id']) or x['id'] in reservation_ids or not valid_reference(x['reference']) or x['reference'] in reservation_refs or x['user_id'] not in uids: fail(422,'validation_failed')
         if not isinstance(x['party_size'],int) or isinstance(x['party_size'],bool) or x['party_size']<1: fail(422,'validation_failed')
         r=next((q for q in f['restaurants'] if q['id']==x['restaurant_id']),None)
         if not r or not any(t['id']==x['table_id'] for t in r['tables']): fail(422,'validation_failed')
         if x.get('status','confirmed')!='confirmed': fail(422,'validation_failed')
         if 'created_at' in x and not isinstance(x['created_at'],str): fail(422,'validation_failed')
         parse_stamp(x['starts_at_local'],r['timezone'])
+        reservation_ids.add(x['id']); reservation_refs.add(x['reference'])
     return True
 
 def validate_import_state(s):
@@ -167,7 +170,7 @@ def validate_import_state(s):
     refs=set(); resids=set()
     for x in s['reservations']:
         if not isinstance(x,dict) or not all(k in x for k in ('id','reference','user_id','restaurant_id','table_id','party_size','starts_at_local','status','created_at')): fail(422,'validation_failed')
-        if not valid_id(x['id']) or not valid_id(x['reference']) or not valid_id(x['user_id']) or not valid_id(x['restaurant_id']) or not valid_id(x['table_id']) or x['id'] in resids or x['reference'] in refs or x['user_id'] not in ids or x['restaurant_id'] not in rids: fail(422,'validation_failed')
+        if not valid_id(x['id']) or not valid_reference(x['reference']) or not valid_id(x['user_id']) or not valid_id(x['restaurant_id']) or not valid_id(x['table_id']) or x['id'] in resids or x['reference'] in refs or x['user_id'] not in ids or x['restaurant_id'] not in rids: fail(422,'validation_failed')
         r=next(q for q in restaurants if q['id']==x['restaurant_id'])
         if not any(t['id']==x['table_id'] for t in r['tables']) or x['status'] not in ('confirmed','cancelled') or not isinstance(x['party_size'],int) or isinstance(x['party_size'],bool) or x['party_size']<1 or not isinstance(x['created_at'],str): fail(422,'validation_failed')
         parse_stamp(x['starts_at_local'],r['timezone']); resids.add(x['id']); refs.add(x['reference'])
