@@ -57,9 +57,18 @@ def body_type(obj,key,typ,required=True):
     return v
 def hashpw(p,salt=None):
     salt=salt or secrets.token_bytes(16).hex()
-    return salt+':'+hashlib.pbkdf2_hmac('sha256',p.encode(),bytes.fromhex(salt),240000).hex()
+    n,r,parallelism=8192,8,1
+    digest=hashlib.scrypt(p.encode(),salt=bytes.fromhex(salt),n=n,r=r,p=parallelism,dklen=32)
+    return f'scrypt${n}${r}${parallelism}${salt}${digest.hex()}'
 def checkpw(p,stored):
-    try: salt,hashed=stored.split(':',1); return hmac.compare_digest(hashlib.pbkdf2_hmac('sha256',p.encode(),bytes.fromhex(salt),240000).hex(),hashed)
+    try:
+        if stored.startswith('scrypt$'):
+            _,n,r,parallelism,salt,hashed=stored.split('$',5)
+            digest=hashlib.scrypt(p.encode(),salt=bytes.fromhex(salt),n=int(n),r=int(r),p=int(parallelism),dklen=len(bytes.fromhex(hashed)))
+            return hmac.compare_digest(digest.hex(),hashed)
+        # Accept Stage 1 exports created before the scrypt encoding change.
+        salt,hashed=stored.split(':',1)
+        return hmac.compare_digest(hashlib.pbkdf2_hmac('sha256',p.encode(),bytes.fromhex(salt),240000).hex(),hashed)
     except Exception: return False
 def auth(h,s):
     v=h.headers.get('Authorization','')
