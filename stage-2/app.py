@@ -279,6 +279,17 @@ class Handler(BaseHTTPRequestHandler):
     def dispatch(self):
         if not self.path.startswith('/'): return
         try:
+            # Browser documents and bundled assets are immutable and do not need
+            # access to the SQLite-backed reservation state or its global lock.
+            path=urlparse(self.path).path
+            if self.command=='GET' and path in ('/','/signup','/login','/lookup','/app.js','/style.css'):
+                if path in ('/','/signup','/login','/lookup'):
+                    self.send(200,self.read_asset('index.html'),'text/html; charset=utf-8')
+                else:
+                    name='app.js' if path=='/app.js' else 'style.css'
+                    kind='text/javascript; charset=utf-8' if name.endswith('.js') else 'text/css; charset=utf-8'
+                    self.send(200,self.read_asset(name),kind)
+                return
             with LOCK:
                 result=self.route()
             self.send(*result)

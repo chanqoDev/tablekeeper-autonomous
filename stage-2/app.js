@@ -128,7 +128,7 @@
   });
   const currentPayload=()=>{
     if(!selected)return null;
-    const payload={restaurant_id:selected.restaurant_id,starts_at_local:selected.local,party_size:Number(document.getElementById('booking-party-size')?.value||selected.party_size)};
+    const payload={restaurant_id:selected.restaurant_id,starts_at_local:selected.local,party_size:Number(document.querySelector('[data-testid="booking-party-size"]')?.value||selected.party_size)};
     // Keep the Stage 1 singleton request shape so a saved Stage 1 receipt can be retried after import.
     if(selected.ids.length===1)payload.table_id=selected.ids[0];else payload.table_ids=[...selected.ids];
     return payload;
