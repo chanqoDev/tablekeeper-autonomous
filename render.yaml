@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: tablekeeper-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./stage-2/Dockerfile
+    dockerContext: ./stage-2
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "10000"
