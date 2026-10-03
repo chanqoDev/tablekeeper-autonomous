@@ -1,0 +1,49 @@
+{
+  "routes": {
+    "home": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "slots": 18,
+      "allUnavailable": true,
+      "reason": [
+        "Capacity is too small for this party",
+        "Capacity is too small for this party"
+      ],
+      "explainChecked": true,
+      "mobile": {
+        "viewport": 375,
+        "documentWidth": 375,
+        "bodyWidth": 375
+      }
+    },
+    "booking_mobile": {
+      "viewport": 375,
+      "documentWidth": 375,
+      "bodyWidth": 375,
+      "summary": "Demo Bistro \u00b7 Window table + Banquette \u00b7 2026-10-10 at 18:00"
+    },
+    "lookup": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "status": "confirmed",
+      "tables": "Seating: Window table + Banquette",
+      "history": 1,
+      "historyFields": [
+        "table ids [\"t_1\",\"t_2\"]",
+        "starts at local \"2026-10-10T18:00\"",
+        "party size 5"
+      ],
+      "seriesOccurrences": 2,
+      "seriesText": "Recurring visits savedVisit 1 \u00b7 2026-10-10 at 18:00 \u00b7 H8UPHE2DVisit 2 \u00b7 2026-10-17 at 18:00 \u00b7 EAVNDLPX",
+      "mobile": {
+        "viewport": 375,
+        "documentWidth": 375,
+        "bodyWidth": 375
+      }
+    }
+  },
+  "errors": [],
+  "reference": "H8UPHE2D"
+}

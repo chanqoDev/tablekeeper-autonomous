@@ -1,0 +1,69 @@
+Tablekeeper Stage 3 independent verification
+============================================
+
+Exact revision: d4d8e36346e07a51c89e6754d0744e3df3ca688d
+Fresh checkout: /tmp/tablekeeper-stage3-d4d8e36-20261003-verifier/checkout
+Checkout state: clean detached HEAD
+
+Protected tree object IDs match the frozen baseline:
+stage-1   1ce0bb60107f4b1640f9b517b0fec2e27036e31b
+stage-2   bcc61db6b9c62e9a6493139c38cce892edd86fed
+evidence  696e5074cef35ddb7de552aa111833e2515cd03a
+mandates  998bf4f87b30ba0b784ef37a27f4c0dd95b043da
+room.json 900f858caf2b32cda33879aef55115ce0127b489
+render    22e0cc94612ca05dccd8951dcba5d344cb07ac4f
+
+Diff from accepted Stage 2 baseline 2bf8abf6d266b1f3988b2b21041b65e1ee22846a:
+Only stage-3/{.gitignore,Dockerfile,RUN.md,app.py,app.js,index.html,style.css} was added.
+
+Independent source review: no Stage 1–3 specification discrepancy found.
+Reviewed no-outbound single-container Docker/runtime setup; Stage 1/2 import upgrade
+and receipt/session continuity; policy validation, per-restaurant version allocation,
+effective-date/version tie selection, accepted terms, policy-aware booking/amendment;
+availability explanations; owner-only history/decision; exact history revisions/changes;
+series adoption, ordering, per-occurrence policy selection, idempotency, owner lookup,
+exceptions/cancellation/revision behavior; combined-table history; collective move
+atomicity, policy/revision checks, overlap rules; browser routes, Stage 2 booking and
+combined-table flow, explanation states, history/series display, labels, focus, and
+responsive widths. No external URL or runtime CDN dependency was found.
+
+Protected-tree checks:
+git -C /tmp/tablekeeper-stage3-d4d8e36-20261003-verifier/checkout rev-parse HEAD:<path>
+reported exactly the six frozen IDs above.
+git diff --stat <Stage2 hash> <Stage3 hash> showed 7 files, all under stage-3/.
+git status --short --branch reported clean detached HEAD.
+node --check stage-3/app.js: passed.
+Python ast.parse of stage-3/app.py: passed.
+
+Build/runtime checks:
+/usr/local/bin/docker build --progress=plain -t tablekeeper-stage3-review-d4d8e36 -f ./stage-3/Dockerfile ./stage-3
+passed; image sha256:f86826fa7e83843b45bdfd26362fe9018ea32b0753d58b9a2313d529aa1ff80c.
+Container launched with --network none; `docker exec ... urllib.request` GET
+http://127.0.0.1:8080/health returned 200 application/json; charset=utf-8 and
+{"status":"ok"}; docker inspect reported network mode `none`.
+
+Browser review evidence: stage3-browser-review.json and stage3-*.png in this folder.
+At 1440px and 375px, document/body widths equal viewport widths. `page_errors` was
+empty. Explain-mode search rendered capacity reasons; combined booking named both
+tables; lookup history recorded table_ids; two weekly series occurrences were shown.
+Focused keyboard check: a new lookup page starts with its skip-link hidden; Tab reveals
+the visible skip-link focus target. Contrast was visually reviewed, not audited with
+formal WCAG ratio calculations.
+
+Official unchanged isolated harness invocation, run from the challenge checkout:
+/Users/chris/Projects/dark-factory-wearedevs/.venv/bin/python -m harness run --track tablekeeper --repo /tmp/tablekeeper-stage3-d4d8e36-20261003-verifier/checkout --stage 3 --mode isolated --out /tmp/tablekeeper-stage3-d4d8e36-20261003-verifier/harness-run
+
+In-scope counts:
+Stage 1: 120 collected, 120 passed, 0 failed, 0 errors.
+Stage 2: 25 collected, 25 passed, 0 failed, 0 errors.
+Stage 3: 7 collected, 7 passed, 0 failed, 0 errors.
+highest_contiguous: 3.
+
+Harness automatically overshot once into Stage 4, despite the requested --stage 3.
+It stopped at the first Stage 4 failure (test_series_clock_time_can_be_changed,
+expected 201 from the unimplemented Stage 4 /series/{id}/amend endpoint; received
+404). Stage 4 is not implemented or in this assignment. Stage 4 evidence is preserved
+at harness-run/stage-4.log and stage-4.counts.json. No Stage 4 changes were made.
+
+Harness report/counts/logs: /tmp/tablekeeper-stage3-d4d8e36-20261003-verifier/harness-run/
+Browser and review evidence: /tmp/tablekeeper-stage3-d4d8e36-20261003-verifier/evidence/

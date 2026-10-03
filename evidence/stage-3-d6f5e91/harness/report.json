@@ -1,0 +1,107 @@
+{
+  "revision": "d6f5e91fce1cb9039f572a85a0a97cd76f51b9c9",
+  "track": "tablekeeper",
+  "stages": {
+    "1": "pass",
+    "2": "pass",
+    "3": "pass"
+  },
+  "highest_contiguous": 3,
+  "started_at": "2026-10-03T03:58:28.208872+00:00",
+  "finished_at": "2026-10-03T04:08:07.340806+00:00",
+  "schema_version": 2,
+  "run_id": "ff2a8b59918d4e2eaff8f46d023b0a95",
+  "mode": "isolated",
+  "provenance": "working-tree",
+  "state": "completed",
+  "pytest_args": [],
+  "suite_digest": "7e85d007a912b44e94c2890b5dccc4dcd416832b6aba35d729844de8c0aa1956",
+  "checks": {
+    "1": {
+      "collected": 120,
+      "passed": 120,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "xfailed": 0,
+      "files": {
+        "stage_1/test_health_reset_auth.py": {
+          "passed": 12,
+          "total": 12
+        },
+        "stage_1/test_reservations.py": {
+          "passed": 37,
+          "total": 37
+        },
+        "stage_1/test_restaurants_availability.py": {
+          "passed": 18,
+          "total": 18
+        },
+        "stage_1/test_retries_time_input.py": {
+          "passed": 20,
+          "total": 20
+        },
+        "stage_1/test_sample.py": {
+          "passed": 20,
+          "total": 20
+        },
+        "stage_1/test_seeded_state.py": {
+          "passed": 13,
+          "total": 13
+        }
+      }
+    },
+    "2": {
+      "collected": 25,
+      "passed": 25,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "xfailed": 0,
+      "files": {
+        "stage_2/test_sample.py": {
+          "passed": 8,
+          "total": 8
+        },
+        "stage_2/test_ui.py": {
+          "passed": 17,
+          "total": 17
+        }
+      }
+    },
+    "3": {
+      "collected": 7,
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "xfailed": 0,
+      "files": {
+        "stage_3/test_sample.py": {
+          "passed": 7,
+          "total": 7
+        }
+      }
+    }
+  },
+  "overshoot": null,
+  "claimed_stage": "3",
+  "share": 1.0,
+  "upgrade_sources": {
+    "2": {
+      "folder": "/tmp/tablekeeper-stage3-d6f5e91-20261003-verifier/checkout/stage-1",
+      "revision": "d6f5e91fce1cb9039f572a85a0a97cd76f51b9c9"
+    },
+    "3": {
+      "folder": "/tmp/tablekeeper-stage3-d6f5e91-20261003-verifier/checkout/stage-2",
+      "revision": "d6f5e91fce1cb9039f572a85a0a97cd76f51b9c9"
+    },
+    "4": {
+      "folder": "/tmp/tablekeeper-stage3-d6f5e91-20261003-verifier/checkout/stage-3",
+      "revision": "d6f5e91fce1cb9039f572a85a0a97cd76f51b9c9"
+    }
+  }
+}

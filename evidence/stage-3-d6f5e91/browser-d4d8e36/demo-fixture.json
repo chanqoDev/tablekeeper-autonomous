@@ -1,0 +1,22 @@
+{
+  "users": [],
+  "restaurants": [
+    {
+      "id": "r_demo",
+      "name": "Demo Bistro",
+      "timezone": "Europe/Berlin",
+      "slot_minutes": 30,
+      "reservation_duration_minutes": 90,
+      "cancellation_cutoff_minutes": 120,
+      "opening_hours": [
+        {"weekday": "sat", "opens": "18:00", "closes": "22:00"}
+      ],
+      "tables": [
+        {"id": "t_1", "label": "Window table", "capacity": 2},
+        {"id": "t_2", "label": "Banquette", "capacity": 4}
+      ],
+      "combinable": [["t_1", "t_2"]]
+    }
+  ],
+  "reservations": []
+}
