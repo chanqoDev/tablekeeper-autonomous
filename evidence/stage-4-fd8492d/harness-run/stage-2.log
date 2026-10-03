@@ -1,0 +1,69 @@
+$ docker run --rm --network df-run-6753ae4e113449fcbde7ac8323a6b98e -v /Users/chris/Projects/dark-factory-wearedevs:/work:ro -v /private/tmp/tablekeeper-stage4-fd8492d-20261003-verifier/harness-run:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest tablekeeper/test/stage_2 --base-url http://df-svc-4beac8de7f35:8080 -p harness.plugin --rootdir tablekeeper/test -q --previous-base-url http://df-svc-92debf4199a6:8080 --harness-summary /out/stage-2.counts.json
+
+...................F.....                                                                                                                                                                        [100%]
+=============================================================================================== FAILURES ===============================================================================================
+_______________________________________________________________________ test_cancel_from_lookup_updates_without_a_manual_reload ________________________________________________________________________
+
+seeded = {'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse', 'display_name': 'Ada'}, {'id': 'u_...s': [{'id': 'r_anker', 'name': 'Zum Anker', 'timezone': 'Europe/Berlin', 'slot_minutes': 30, ...}], 'reservations': []}
+page = <Page url='http://df-svc-4beac8de7f35:8080/'>
+
+    def test_cancel_from_lookup_updates_without_a_manual_reload(seeded, page):
+>       reference = _book_via_ui(page)
+                    ^^^^^^^^^^^^^^^^^^
+
+tablekeeper/test/stage_2/test_ui.py:170: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tablekeeper/test/stage_2/test_ui.py:151: in _book_via_ui
+    log_in(page)
+tablekeeper/test/stage_2/test_ui.py:40: in log_in
+    page.wait_for_selector(sel("current-user"))
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:9061: in wait_for_selector
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:429: in wait_for_selector
+    return await self._main_frame.wait_for_selector(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:395: in wait_for_selector
+    await self._channel.send(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f2f11c1f9b0>, cb = <function Channel.send.<locals>.<lambda> at 0x7f2f1123ec00>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.wait_for_selector: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='current-user']") to be visible
+E               - waiting for navigation to finish...
+E               - navigated to "http://df-svc-4beac8de7f35:8080/"
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+=========================================================================================== warnings summary ===========================================================================================
+../usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: cache could not write path /work/tablekeeper/test/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/work/tablekeeper/test/.pytest_cache/v/cache/nodeids'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:423
+  /usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:423: PytestCacheWarning: cache could not write path /work/tablekeeper/test/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/work/tablekeeper/test/.pytest_cache/v/cache/lastfailed'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================================================================================= short test summary info ========================================================================================
+FAILED tablekeeper/test/stage_2/test_ui.py::test_cancel_from_lookup_updates_without_a_manual_reload - playwright._impl._errors.TimeoutError: Page.wait_for_selector: Timeout 10000ms exceeded.
+1 failed, 24 passed, 2 warnings in 407.77s (0:06:47)
+

@@ -1,0 +1,131 @@
+Stage 4 fd8492d host resource diagnostic
+Window: 2026-10-03 00:03:00–00:12:00 local time
+Source command: /usr/bin/log show --style compact --start "2026-10-03 00:03:00" --end "2026-10-03 00:12:00" --predicate "process == kernel AND eventMessage CONTAINS[c] memorystatus: killing_idle_process"
+Observed events: 124
+First: 2026-10-03 00:04:06.374 Df kernel[0:181] memorystatus: killing_idle_process pid 81616 [keybagd] jetsam_reason->osr_code: 9
+Last: 2026-10-03 00:11:59.667 Df kernel[0:181] memorystatus: killing_idle_process pid 82293 [bird] jetsam_reason->osr_code: 9
+These events are contemporaneous memory-reclamation evidence, not proof of cause for the browser timeout. Full matching log output follows:
+2026-10-03 00:04:06.374 Df kernel[0:181] memorystatus: killing_idle_process pid 81616 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:07.376 Df kernel[0:181] memorystatus: killing_idle_process pid 81657 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:08.378 Df kernel[0:181] memorystatus: killing_idle_process pid 81660 [sandboxd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:09.381 Df kernel[0:181] memorystatus: killing_idle_process pid 81656 [secd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:10.390 Df kernel[0:181] memorystatus: killing_idle_process pid 81658 [CloudKeychainProxy] jetsam_reason->osr_code: 9
+2026-10-03 00:04:11.397 Df kernel[0:181] memorystatus: killing_idle_process pid 81296 [callservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:12.408 Df kernel[0:181] memorystatus: killing_idle_process pid 81511 [amsengagementd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:13.414 Df kernel[0:181] memorystatus: killing_idle_process pid 81365 [dmd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:14.419 Df kernel[0:181] memorystatus: killing_idle_process pid 80165 [accountsd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:15.423 Df kernel[0:181] memorystatus: killing_idle_process pid 80496 [containermanagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:16.426 Df kernel[0:181] memorystatus: killing_idle_process pid 80270 [com.apple.geod] jetsam_reason->osr_code: 9
+2026-10-03 00:04:17.429 Df kernel[0:181] memorystatus: killing_idle_process pid 81659 [tccd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:18.430 Df kernel[0:181] memorystatus: killing_idle_process pid 81326 [bird] jetsam_reason->osr_code: 9
+2026-10-03 00:04:19.440 Df kernel[0:181] memorystatus: killing_idle_process pid 82124 [sysmond] jetsam_reason->osr_code: 9
+2026-10-03 00:04:20.442 Df kernel[0:181] memorystatus: killing_idle_process pid 82127 [iconservicesagent] jetsam_reason->osr_code: 9
+2026-10-03 00:04:21.442 Df kernel[0:181] memorystatus: killing_idle_process pid 82128 [iconservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:22.443 Df kernel[0:181] memorystatus: killing_idle_process pid 81613 [ViewBridgeAuxiliary] jetsam_reason->osr_code: 9
+2026-10-03 00:04:23.487 Df kernel[0:181] memorystatus: killing_idle_process pid 81615 [Keychain Circle Notification] jetsam_reason->osr_code: 9
+2026-10-03 00:04:24.491 Df kernel[0:181] memorystatus: killing_idle_process pid 82125 [TextInputMenuAgent] jetsam_reason->osr_code: 9
+2026-10-03 00:04:25.528 Df kernel[0:181] memorystatus: killing_idle_process pid 82126 [TextInputSwitcher] jetsam_reason->osr_code: 9
+2026-10-03 00:04:26.531 Df kernel[0:181] memorystatus: killing_idle_process pid 81970 [softwareupdated] jetsam_reason->osr_code: 9
+2026-10-03 00:04:27.573 Df kernel[0:181] memorystatus: killing_idle_process pid 80259 [AppleSpell] jetsam_reason->osr_code: 9
+2026-10-03 00:04:28.609 Df kernel[0:181] memorystatus: killing_idle_process pid 82176 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:04:29.623 Df kernel[0:181] memorystatus: killing_idle_process pid 81655 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:41.586 Df kernel[0:181] memorystatus: killing_idle_process pid 82175 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:42.649 Df kernel[0:181] memorystatus: killing_idle_process pid 82194 [containermanagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:43.652 Df kernel[0:181] memorystatus: killing_idle_process pid 82195 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:44.685 Df kernel[0:181] memorystatus: killing_idle_process pid 82192 [CloudKeychainProxy] jetsam_reason->osr_code: 9
+2026-10-03 00:05:45.804 Df kernel[0:181] memorystatus: killing_idle_process pid 82197 [sandboxd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:46.812 Df kernel[0:181] memorystatus: killing_idle_process pid 82199 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:47.814 Df kernel[0:181] memorystatus: killing_idle_process pid 82198 [bird] jetsam_reason->osr_code: 9
+2026-10-03 00:05:48.820 Df kernel[0:181] memorystatus: killing_idle_process pid 82183 [ViewBridgeAuxiliary] jetsam_reason->osr_code: 9
+2026-10-03 00:05:49.841 Df kernel[0:181] memorystatus: killing_idle_process pid 82202 [iconservicesagent] jetsam_reason->osr_code: 9
+2026-10-03 00:05:50.842 Df kernel[0:181] memorystatus: killing_idle_process pid 82203 [iconservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:51.859 Df kernel[0:181] memorystatus: killing_idle_process pid 82201 [TextInputSwitcher] jetsam_reason->osr_code: 9
+2026-10-03 00:05:52.865 Df kernel[0:181] memorystatus: killing_idle_process pid 82184 [Keychain Circle Notification] jetsam_reason->osr_code: 9
+2026-10-03 00:05:53.871 Df kernel[0:181] memorystatus: killing_idle_process pid 82204 [ocspd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:54.931 Df kernel[0:181] memorystatus: killing_idle_process pid 82191 [secd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:55.938 Df kernel[0:181] memorystatus: killing_idle_process pid 81855 [coreduetd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:56.943 Df kernel[0:181] memorystatus: killing_idle_process pid 82211 [keyboardservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:05:57.951 Df kernel[0:181] memorystatus: killing_idle_process pid 82200 [TextInputMenuAgent] jetsam_reason->osr_code: 9
+2026-10-03 00:05:59.026 Df kernel[0:181] memorystatus: killing_idle_process pid 80373 [mobileassetd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:00.028 Df kernel[0:181] memorystatus: killing_idle_process pid 82196 [tccd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:01.030 Df kernel[0:181] memorystatus: killing_idle_process pid 81661 [backupd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:02.032 Df kernel[0:181] memorystatus: killing_idle_process pid 82236 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:03.033 Df kernel[0:181] memorystatus: killing_idle_process pid 82237 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:14.622 Df kernel[0:181] memorystatus: killing_idle_process pid 82242 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:15.630 Df kernel[0:181] memorystatus: killing_idle_process pid 81614 [com.apple.CodeSigningHelper] jetsam_reason->osr_code: 9
+2026-10-03 00:06:16.631 Df kernel[0:181] memorystatus: killing_idle_process pid 82248 [iconservicesagent] jetsam_reason->osr_code: 9
+2026-10-03 00:06:17.633 Df kernel[0:181] memorystatus: killing_idle_process pid 82249 [iconservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:18.635 Df kernel[0:181] memorystatus: killing_idle_process pid 80385 [trustd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:19.751 Df kernel[0:181] memorystatus: killing_idle_process pid 82247 [TextInputSwitcher] jetsam_reason->osr_code: 9
+2026-10-03 00:06:20.754 Df kernel[0:181] memorystatus: killing_idle_process pid 82251 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:21.755 Df kernel[0:181] memorystatus: killing_idle_process pid 82243 [ViewBridgeAuxiliary] jetsam_reason->osr_code: 9
+2026-10-03 00:06:22.759 Df kernel[0:181] memorystatus: killing_idle_process pid 82245 [TextInputMenuAgent] jetsam_reason->osr_code: 9
+2026-10-03 00:06:23.764 Df kernel[0:181] memorystatus: killing_idle_process pid 82238 [containermanagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:24.766 Df kernel[0:181] memorystatus: killing_idle_process pid 82253 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:25.768 Df kernel[0:181] memorystatus: killing_idle_process pid 82255 [sandboxd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:26.770 Df kernel[0:181] memorystatus: killing_idle_process pid 82254 [tccd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:27.852 Df kernel[0:181] memorystatus: killing_idle_process pid 82244 [Keychain Circle Notification] jetsam_reason->osr_code: 9
+2026-10-03 00:06:28.861 Df kernel[0:181] memorystatus: killing_idle_process pid 82252 [CloudKeychainProxy] jetsam_reason->osr_code: 9
+2026-10-03 00:06:29.863 Df kernel[0:181] memorystatus: killing_idle_process pid 82250 [secd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:30.866 Df kernel[0:181] memorystatus: killing_idle_process pid 82256 [backupd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:31.871 Df kernel[0:181] memorystatus: killing_idle_process pid 82261 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:06:32.929 Df kernel[0:181] memorystatus: killing_idle_process pid 82262 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:16.644 Df kernel[0:181] memorystatus: killing_idle_process pid 82270 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:17.647 Df kernel[0:181] memorystatus: killing_idle_process pid 82275 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:18.659 Df kernel[0:181] memorystatus: killing_idle_process pid 82277 [iconservicesagent] jetsam_reason->osr_code: 9
+2026-10-03 00:07:19.661 Df kernel[0:181] memorystatus: killing_idle_process pid 82278 [iconservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:20.663 Df kernel[0:181] memorystatus: killing_idle_process pid 82274 [TextInputMenuAgent] jetsam_reason->osr_code: 9
+2026-10-03 00:07:21.671 Df kernel[0:181] memorystatus: killing_idle_process pid 82276 [TextInputSwitcher] jetsam_reason->osr_code: 9
+2026-10-03 00:07:22.675 Df kernel[0:181] memorystatus: killing_idle_process pid 82269 [com.apple.CodeSigningHelper] jetsam_reason->osr_code: 9
+2026-10-03 00:07:23.703 Df kernel[0:181] memorystatus: killing_idle_process pid 82282 [sandboxd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:24.744 Df kernel[0:181] memorystatus: killing_idle_process pid 82259 [bird] jetsam_reason->osr_code: 9
+2026-10-03 00:07:25.755 Df kernel[0:181] memorystatus: killing_idle_process pid 79215 [tccd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:26.761 Df kernel[0:181] memorystatus: killing_idle_process pid 82287 [backupd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:27.768 Df kernel[0:181] memorystatus: killing_idle_process pid 82273 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:28.774 Df kernel[0:181] memorystatus: killing_idle_process pid 82280 [CloudKeychainProxy] jetsam_reason->osr_code: 9
+2026-10-03 00:07:29.776 Df kernel[0:181] memorystatus: killing_idle_process pid 82279 [secd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:30.783 Df kernel[0:181] memorystatus: killing_idle_process pid 82288 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:07:31.787 Df kernel[0:181] memorystatus: killing_idle_process pid 82289 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:34.241 Df kernel[0:181] memorystatus: killing_idle_process pid 82292 [sandboxd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:35.249 Df kernel[0:181] memorystatus: killing_idle_process pid 81519 [aslmanager] jetsam_reason->osr_code: 9
+2026-10-03 00:08:36.251 Df kernel[0:181] memorystatus: killing_idle_process pid 82294 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:37.259 Df kernel[0:181] memorystatus: killing_idle_process pid 82295 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:38.260 Df kernel[0:181] memorystatus: killing_idle_process pid 82290 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:39.280 Df kernel[0:181] memorystatus: killing_idle_process pid 82297 [com.apple.CodeSigningHelper] jetsam_reason->osr_code: 9
+2026-10-03 00:08:40.296 Df kernel[0:181] memorystatus: killing_idle_process pid 82299 [iconservicesagent] jetsam_reason->osr_code: 9
+2026-10-03 00:08:41.303 Df kernel[0:181] memorystatus: killing_idle_process pid 82300 [iconservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:42.304 Df kernel[0:181] memorystatus: killing_idle_process pid 80472 [cfprefsd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:43.306 Df kernel[0:181] memorystatus: killing_idle_process pid 82271 [Keychain Circle Notification] jetsam_reason->osr_code: 9
+2026-10-03 00:08:44.311 Df kernel[0:181] memorystatus: killing_idle_process pid 82304 [backupd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:45.377 Df kernel[0:181] memorystatus: killing_idle_process pid 82263 [ViewBridgeAuxiliary] jetsam_reason->osr_code: 9
+2026-10-03 00:08:46.403 Df kernel[0:181] memorystatus: killing_idle_process pid 82272 [containermanagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:47.406 Df kernel[0:181] memorystatus: killing_idle_process pid 82298 [TextInputSwitcher] jetsam_reason->osr_code: 9
+2026-10-03 00:08:48.413 Df kernel[0:181] memorystatus: killing_idle_process pid 82296 [TextInputMenuAgent] jetsam_reason->osr_code: 9
+2026-10-03 00:08:49.440 Df kernel[0:181] memorystatus: killing_idle_process pid 82310 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:50.442 Df kernel[0:181] memorystatus: killing_idle_process pid 82311 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:08:51.445 Df kernel[0:181] memorystatus: killing_idle_process pid 82312 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:09:56.675 Df kernel[0:181] memorystatus: killing_idle_process pid 82317 [com.apple.CodeSigningHelper] jetsam_reason->osr_code: 9
+2026-10-03 00:09:57.684 Df kernel[0:181] memorystatus: killing_idle_process pid 82321 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:09:58.685 Df kernel[0:181] memorystatus: killing_idle_process pid 82315 [cfprefsd] jetsam_reason->osr_code: 9
+2026-10-03 00:09:59.687 Df kernel[0:181] memorystatus: killing_idle_process pid 82318 [secd] jetsam_reason->osr_code: 9
+2026-10-03 00:10:00.694 Df kernel[0:181] memorystatus: killing_idle_process pid 82322 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:10:01.697 Df kernel[0:181] memorystatus: killing_idle_process pid 82319 [CloudKeychainProxy] jetsam_reason->osr_code: 9
+2026-10-03 00:10:02.709 Df kernel[0:181] memorystatus: killing_idle_process pid 82291 [tccd] jetsam_reason->osr_code: 9
+2026-10-03 00:10:03.711 Df kernel[0:181] memorystatus: killing_idle_process pid 82323 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:10:04.716 Df kernel[0:181] memorystatus: killing_idle_process pid 82313 [Keychain Circle Notification] jetsam_reason->osr_code: 9
+2026-10-03 00:10:05.754 Df kernel[0:181] memorystatus: killing_idle_process pid 82316 [ViewBridgeAuxiliary] jetsam_reason->osr_code: 9
+2026-10-03 00:10:06.827 Df kernel[0:181] memorystatus: killing_idle_process pid 82246 [mobileassetd] jetsam_reason->osr_code: 9
+2026-10-03 00:10:07.998 Df kernel[0:181] memorystatus: killing_idle_process pid 82314 [backupd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:47.513 Df kernel[0:181] memorystatus: killing_idle_process pid 82332 [WirelessRadioManagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:48.515 Df kernel[0:181] memorystatus: killing_idle_process pid 82335 [keybagd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:49.516 Df kernel[0:181] memorystatus: killing_idle_process pid 82345 [sandboxd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:50.540 Df kernel[0:181] memorystatus: killing_idle_process pid 82341 [gamecontrollerd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:51.543 Df kernel[0:181] memorystatus: killing_idle_process pid 82352 [iconservicesagent] jetsam_reason->osr_code: 9
+2026-10-03 00:11:52.545 Df kernel[0:181] memorystatus: killing_idle_process pid 82353 [iconservicesd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:53.554 Df kernel[0:181] memorystatus: killing_idle_process pid 82320 [containermanagerd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:54.556 Df kernel[0:181] memorystatus: killing_idle_process pid 82369 [secd] jetsam_reason->osr_code: 9
+2026-10-03 00:11:55.560 Df kernel[0:181] memorystatus: killing_idle_process pid 82370 [CloudKeychainProxy] jetsam_reason->osr_code: 9
+2026-10-03 00:11:56.577 Df kernel[0:181] memorystatus: killing_idle_process pid 82343 [Keychain Circle Notification] jetsam_reason->osr_code: 9
+2026-10-03 00:11:57.645 Df kernel[0:181] memorystatus: killing_idle_process pid 82347 [ViewBridgeAuxiliary] jetsam_reason->osr_code: 9
+2026-10-03 00:11:58.663 Df kernel[0:181] memorystatus: killing_idle_process pid 82351 [TextInputSwitcher] jetsam_reason->osr_code: 9
+2026-10-03 00:11:59.667 Df kernel[0:181] memorystatus: killing_idle_process pid 82293 [bird] jetsam_reason->osr_code: 9

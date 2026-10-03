@@ -1,0 +1,1 @@
+{"collected": 25, "passed": 23, "failed": 2, "errors": 0, "skipped": 0, "deselected": 0, "xfailed": 0, "files": {"stage_2/test_sample.py": {"passed": 7, "total": 8}, "stage_2/test_ui.py": {"passed": 16, "total": 17}}}
