@@ -68,10 +68,12 @@ restore only restaurants.
    is not a write barrier; if no traffic gate is available, do not claim writes are stopped
    or proceed with the restore.
 3. Reconcile records made after the pre-restore export. Review the affected booking,
-   account, and operator activity through the service and reconcile every record that must
-   survive into the chosen complete export. If the pre-restore export is no longer the
-   desired state, take another private export after writes have stopped and use that as the
-   reconciliation source. Do not assume import will retain post-export records.
+   account, and operator activity through the service and decide which records must survive.
+   If any newer records must be retained, take a second private full export after writes
+   have stopped and prefer that as the chosen state. Do not hand-edit the opaque `state`
+   object or assume import will merge post-export records. If a required record is missing
+   from the chosen complete export and cannot be preserved through a supported application
+   workflow, stop and resolve that before importing.
 4. Select the complete export to restore and assign its private filename to
    `CHOSEN_EXPORT_FILE`. Review the choice without printing the sensitive payload. The
    chosen file must be a complete Tablekeeper export with `track: "tablekeeper"` and
