@@ -1,0 +1,8 @@
+FROM python:3.12-slim
+WORKDIR /app
+COPY stage-4/app.py /app/app.py
+COPY stage-4/index.html stage-4/app.js stage-4/style.css /app/
+COPY deployment/bootstrap_demo.py deployment/demo-restaurants.json /app/
+ENV PORT=10000 TABLEKEEPER_DB=/tmp/tablekeeper.sqlite3
+EXPOSE 10000
+CMD ["python", "-u", "/app/bootstrap_demo.py"]

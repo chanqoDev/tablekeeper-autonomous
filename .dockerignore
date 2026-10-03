@@ -1,0 +1,10 @@
+**
+!Dockerfile.render
+!stage-4/
+!stage-4/app.py
+!stage-4/index.html
+!stage-4/app.js
+!stage-4/style.css
+!deployment/
+!deployment/bootstrap_demo.py
+!deployment/demo-restaurants.json

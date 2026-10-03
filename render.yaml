@@ -3,8 +3,8 @@ services:
     name: tablekeeper-demo
     runtime: docker
     plan: free
-    dockerfilePath: ./stage-2/Dockerfile
-    dockerContext: ./stage-2
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
     healthCheckPath: /health
     envVars:
       - key: PORT

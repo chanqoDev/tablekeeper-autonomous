@@ -1,0 +1,50 @@
+[
+  {
+    "id": "demo_anker",
+    "name": "Zum Anker",
+    "timezone": "Europe/Berlin",
+    "slot_minutes": 30,
+    "reservation_duration_minutes": 90,
+    "cancellation_cutoff_minutes": 120,
+    "opening_hours": [
+      {"weekday": "mon", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "tue", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "wed", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "thu", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "fri", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "sat", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "sun", "opens": "17:00", "closes": "23:00"}
+    ],
+    "tables": [
+      {"id": "anker_2", "label": "Window for two", "capacity": 2},
+      {"id": "anker_4", "label": "Garden table", "capacity": 4},
+      {"id": "anker_6", "label": "Long table", "capacity": 6}
+    ],
+    "combinable": [["anker_2", "anker_4"]],
+    "manager_user_ids": []
+  },
+  {
+    "id": "demo_copper_fig",
+    "name": "The Copper Fig",
+    "timezone": "America/New_York",
+    "slot_minutes": 30,
+    "reservation_duration_minutes": 90,
+    "cancellation_cutoff_minutes": 120,
+    "opening_hours": [
+      {"weekday": "mon", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "tue", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "wed", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "thu", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "fri", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "sat", "opens": "17:00", "closes": "23:00"},
+      {"weekday": "sun", "opens": "17:00", "closes": "23:00"}
+    ],
+    "tables": [
+      {"id": "fig_2", "label": "Corner table", "capacity": 2},
+      {"id": "fig_4", "label": "Patio table", "capacity": 4},
+      {"id": "fig_6", "label": "Family table", "capacity": 6}
+    ],
+    "combinable": [["fig_2", "fig_4"]],
+    "manager_user_ids": []
+  }
+]
