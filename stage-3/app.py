@@ -536,7 +536,8 @@ class Handler(BaseHTTPRequestHandler):
             save(ns); return 204,None
         if path=='/_test/export' and method=='GET': return 200,{'track':'tablekeeper','format_version':1,'state':s}
         if path=='/_test/import' and method=='POST':
-            if obj.get('track')!='tablekeeper' or obj.get('format_version')!=1: fail(422,'validation_failed')
+            version=obj.get('format_version')
+            if obj.get('track')!='tablekeeper' or type(version) is not int or version!=1: fail(422,'validation_failed')
             ns=obj.get('state'); validate_import_state(ns); ns=upgrade_state(ns)
             save(ns); return 204,None
         if path=='/auth/signup' and method=='POST':
