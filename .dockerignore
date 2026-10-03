@@ -8,3 +8,7 @@
 !deployment/
 !deployment/bootstrap_demo.py
 !deployment/demo-restaurants.json
+!deployment/apply_polish.py
+!deployment/polish.js
+!deployment/polish.css
+!deployment/favicon.svg
