@@ -22,3 +22,11 @@ After the independent review identified a UTC offset label mismatch, the no-IANA
 - `node --check deployment/polish.js` and the deployment image build passed after the fixes.
 - A fresh `docker build --no-cache -f Dockerfile.render -t tablekeeper-polish-local .` passed after adding the overlay assets to `.dockerignore`'s deployment allowlist; this confirms the new build inputs are present without relying on a prior image layer cache.
 - The independent follow-up browser review is pending; see `evidence/deployment-polish-review/` for earlier screenshots and findings.
+
+## Metadata-failure fallback follow-up
+
+The independent browser run on `472499c` still timed out before showing the reservation when its restaurant-details request was aborted. To make the user-facing fallback independent of the browser fetch-wrapper behavior, the deployment assembler now patches only the packaged Stage 4 lookup promise: after a reservation has loaded, a failed restaurant-details lookup supplies a generic restaurant name and empty table list so Stage 4 can render the reservation. The overlay then displays `Table label unavailable` and formats history timestamps from the stored numeric offset. The protected Stage 4 source file remains unchanged.
+
+- Temporary-directory overlay assembly passed and verified the specific lookup catch, favicon serving route, and favicon link.
+- `node --check deployment/polish.js`, `git diff --check`, and the protected stage-tree diff passed.
+- A no-cache Docker build was attempted but the Docker daemon did not respond; it was interrupted. This change therefore still needs independent packaged-browser verification on the new commit.

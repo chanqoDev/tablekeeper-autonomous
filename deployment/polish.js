@@ -101,6 +101,11 @@
     const reference = detail.querySelector('code')?.textContent?.trim();
     const match = [...sourceEntries.keys()].find(key => key === reference);
     const reservation = reservationsByReference.get(reference);
+    if (reservation && window.__tablekeeperRestaurantDetailsUnavailable) {
+      unavailableRestaurants.add(reservation.restaurant_id);
+      tableLabels.set(reservation.restaurant_id, new Map());
+      restaurantZones.set(reservation.restaurant_id, null);
+    }
     if (reservation && unavailableRestaurants.has(reservation.restaurant_id)) {
       const seating = detail.querySelector('[data-testid="reservation-tables"]');
       if (seating) seating.innerHTML = '<strong>Seating:</strong> Table label unavailable';
@@ -154,6 +159,11 @@
     const detail = document.querySelector('[data-testid="reservation-detail"]');
     const reference = detail?.querySelector('code')?.textContent?.trim();
     const reservation = reservationsByReference.get(reference);
+    if (reservation && window.__tablekeeperRestaurantDetailsUnavailable) {
+      unavailableRestaurants.add(reservation.restaurant_id);
+      tableLabels.set(reservation.restaurant_id, new Map());
+      restaurantZones.set(reservation.restaurant_id, null);
+    }
     if (detail && reservation && unavailableRestaurants.has(reservation.restaurant_id)) {
       const seating = detail.querySelector('[data-testid="reservation-tables"]');
       if (seating) seating.innerHTML = '<strong>Seating:</strong> Table label unavailable';
