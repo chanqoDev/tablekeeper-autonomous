@@ -1,0 +1,41 @@
+{
+  "commit": "c5984f0d1eb6bf5ce29fb46e6e8ea919f7504ca3",
+  "anchor": "GZYZ4YSP",
+  "seriesRefs": [
+    "GZYZ4YSP",
+    "TQCL05NW",
+    "UQWSFACN"
+  ],
+  "afterCancel": [
+    "confirmed",
+    "cancelled",
+    "confirmed"
+  ],
+  "history": "Created/table field labels/terms/Europe-Berlin timestamp/full JSON; native disclosure keyboard open and close",
+  "fallback": {
+    "missingCurrentTableLabels": "honest fallback shown, raw ID hidden",
+    "noZoneTimestamp": "Jan 2, 2030, 8:00 AM (UTC+02:00)",
+    "interpretation": "Rendered UTC clock value with a UTC+02:00 label; the label does not match the formatted timezone",
+    "failedRestaurantMetadata": {
+      "error": "Failed to fetch",
+      "historyPanel": 0
+    }
+  },
+  "favicon": {
+    "href": "/favicon.svg",
+    "status": 200,
+    "type": "image/svg+xml",
+    "viewBox": "32x32"
+  },
+  "consoleErrors": [
+    "Failed to load resource: net::ERR_FAILED"
+  ],
+  "screenshots": [
+    "history-desktop.png",
+    "history-mobile-375.png",
+    "series-desktop.png",
+    "series-mobile-375.png",
+    "history-fallback-nozone.png",
+    "favicon-16px-32px.png"
+  ]
+}

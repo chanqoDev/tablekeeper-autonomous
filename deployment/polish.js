@@ -47,8 +47,14 @@
         return `${formatted} (${zone})`;
       } catch (_) {}
     }
-    const offset = raw.match(/([+-]\d\d:\d\d|Z)$/)?.[0] || 'UTC offset unavailable';
-    return `${new Intl.DateTimeFormat(undefined, {dateStyle:'medium',timeStyle:'short',timeZone:'UTC'}).format(date)} (UTC${offset === 'Z' ? '+00:00' : offset === 'UTC offset unavailable' ? '' : offset})`;
+    const match = String(raw).match(/^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)(?::(\d\d)(?:\.\d+)?)?(Z|[+-]\d\d:\d\d)$/);
+    if (!match) return `${raw} (timezone unavailable)`;
+    // Format the stored wall-clock fields as if they were UTC, then label them
+    // with the numeric offset already present in the historical timestamp.
+    const wallClock = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4]), Number(match[5]), Number(match[6] || 0)));
+    const formatted = new Intl.DateTimeFormat(undefined, {dateStyle:'medium',timeStyle:'short',timeZone:'UTC'}).format(wallClock);
+    const offset = match[7] === 'Z' ? '+00:00' : match[7];
+    return `${formatted} (UTC${offset})`;
   };
   const termSummary = terms => {
     if (!terms || typeof terms !== 'object') return 'Accepted terms were not included with this historical event.';
