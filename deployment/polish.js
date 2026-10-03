@@ -73,8 +73,7 @@
   const renderHistory = (panel, reference, restaurantId) => {
     const entries = sourceEntries.get(reference);
     if (!entries || !panel.isConnected) return;
-    const labels = labelsFor(restaurantId);
-    if (!labels) return;
+    const labels = labelsFor(restaurantId) || new Map();
     const zone = restaurantZones.get(restaurantId);
     const list = panel.querySelector('.history-list');
     if (!list) return;

@@ -18,6 +18,7 @@ After the independent review identified a UTC offset label mismatch, the no-IANA
 
 - A focused Node check passed for the offset example `2030-01-02T08:00:00+02:00`, rendered as `Jan 2, 2030, 8:00 AM (UTC+02:00)`.
 - A focused fetch-wrapper check passed for network failures and HTTP 503 responses on lookup restaurant metadata, while preserving normal failure handling on other routes.
+- A focused history-renderer check passed when no restaurant/table-label map exists: visible history uses `Table label unavailable`, raw IDs stay inside collapsed Technical details, and the timestamp remains `Jan 2, 2030, 10:00 AM (UTC+02:00)`.
 - `node --check deployment/polish.js` and the deployment image build passed after the fixes.
 - A fresh `docker build --no-cache -f Dockerfile.render -t tablekeeper-polish-local .` passed after adding the overlay assets to `.dockerignore`'s deployment allowlist; this confirms the new build inputs are present without relying on a prior image layer cache.
 - The independent follow-up browser review is pending; see `evidence/deployment-polish-review/` for earlier screenshots and findings.
