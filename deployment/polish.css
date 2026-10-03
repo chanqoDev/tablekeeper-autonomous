@@ -1,0 +1,16 @@
+.history-heading { align-items: flex-start; }
+.history-heading strong { text-transform: none; }
+.history-list time { line-height: 1.5; }
+.history-changes { display: grid; gap: 7px; margin: 12px 0; padding: 0; list-style: none; }
+.history-changes li { color: var(--muted); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.history-changes strong { color: var(--ink); font-weight: 600; }
+.history-terms { margin: 12px 0; padding: 10px 12px; border-left: 2px solid var(--cyan); color: var(--muted); background: rgba(115, 228, 235, .045); font-size: 12px; line-height: 1.6; }
+.history-list details { margin-top: 12px; font-size: 12px; }
+.history-list summary { min-height: 24px; width: fit-content; padding: 4px 0; }
+.history-list details:focus-within summary { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.history-list pre { font-size: 11px; line-height: 1.5; }
+@media (max-width: 420px) {
+  .history-list > li { padding: 11px; }
+  .history-heading { flex-wrap: wrap; gap: 4px 10px; }
+  .history-heading span { margin-left: auto; }
+}
