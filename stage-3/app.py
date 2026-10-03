@@ -292,7 +292,9 @@ def validate_policy(r,obj):
     capacities=obj['capacities']; expected={t['id'] for t in r.get('tables',[])}
     if not isinstance(capacities,dict) or set(capacities)!=expected: fail(422,'validation_failed')
     if any(not isinstance(value,int) or isinstance(value,bool) or not 1<=value<=100 for value in capacities.values()): fail(422,'validation_failed')
-    return {k:json.loads(json.dumps(obj[k])) for k in required}
+    clean={k:json.loads(json.dumps(obj[k])) for k in required}
+    clean['opening_hours']=[{field:row[field] for field in ('weekday','opens','closes')} for row in hours]
+    return clean
 
 def validate_terms_snapshot(r,terms,known_policies):
     if not isinstance(terms,dict): fail(422,'validation_failed')
@@ -556,7 +558,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.idempotent(s,uid,obj,'POST',path,lambda:self.publish_policy(s,uid,policy_path.group(1),obj))
         m=re.fullmatch(r'/restaurants/([^/]+)',path)
         if m and method=='GET':
-            r=restaurant(s,m.group(1)); out={k:r[k] for k in ('id','name','timezone','slot_minutes','reservation_duration_minutes','cancellation_cutoff_minutes','opening_hours','tables')}; out['combinable']=allowed_combinations(r); return 200,out
+            r=restaurant(s,m.group(1)); out={k:r[k] for k in ('id','name','timezone','slot_minutes','reservation_duration_minutes','cancellation_cutoff_minutes')}; out['opening_hours']=[{field:row[field] for field in ('weekday','opens','closes')} for row in r['opening_hours']]; out['tables']=[{field:table[field] for field in ('id','label','capacity')} for table in r['tables']]; out['combinable']=allowed_combinations(r); return 200,out
         if history_path and method=='GET':
             token=self.headers.get('Authorization',''); caller=s.get('tokens',{}).get(token[7:]) if token.startswith('Bearer ') else None
             reservation=next((x for x in s['reservations'] if x['reference']==history_path.group(1) and x['user_id']==caller),None)
@@ -659,7 +661,6 @@ class Handler(BaseHTTPRequestHandler):
                 if k=='party_size': fail(422,'validation_failed')
                 fail(400,'malformed_request')
         if 'table_ids' in fields and (not isinstance(fields['table_ids'],list) or any(not isinstance(t,str) for t in fields['table_ids'])): fail(400,'malformed_request')
-        if 'expected_revision' in fields and (not isinstance(fields['expected_revision'],int) or isinstance(fields['expected_revision'],bool) or fields['expected_revision']<1): fail(422,'validation_failed')
     def publish_policy(self,s,uid,rid,obj):
         r=restaurant(s,rid)
         if uid not in r.get('manager_user_ids',[]): fail(403,'forbidden')
