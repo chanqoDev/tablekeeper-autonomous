@@ -30,3 +30,11 @@ The independent browser run on `472499c` still timed out before showing the rese
 - Temporary-directory overlay assembly passed and verified the specific lookup catch, favicon serving route, and favicon link.
 - `node --check deployment/polish.js`, `git diff --check`, and the protected stage-tree diff passed.
 - A no-cache Docker build was attempted but the Docker daemon did not respond; it was interrupted. This change therefore still needs independent packaged-browser verification on the new commit.
+
+## Idempotent label fallback follow-up
+
+The independent browser run on `13f43de` found that replacing the seating text from both the MutationObserver and retry interval caused a repeated child-list mutation. The fallback now marks the seating element after its first rewrite and skips later rewrites. This keeps the reservation panel stable while showing the unavailable-label text.
+
+- Temporary-directory overlay assembly, packaged `app.js` and `polish.js` syntax, and a focused assertion that both fallback paths call the guarded helper passed.
+- `node --check deployment/polish.js`, `git diff --check`, and the protected stage-tree comparison passed.
+- Browser verification of HTTP/network metadata failure remains with the independent Verifier. Docker daemon remains unresponsive in this runtime.

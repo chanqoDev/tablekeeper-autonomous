@@ -37,6 +37,13 @@
     const ids = Array.isArray(value) ? value : [value];
     return ids.map(id => labels?.get(id) || 'Table label unavailable').join(' + ');
   };
+  const showUnavailableTable = detail => {
+    const seating = detail.querySelector('[data-testid="reservation-tables"]');
+    if (seating && seating.dataset.labelUnavailable !== 'true') {
+      seating.dataset.labelUnavailable = 'true';
+      seating.innerHTML = '<strong>Seating:</strong> Table label unavailable';
+    }
+  };
   const prettyValue = (field, value, labels) => {
     if (value === null || value === undefined) return '—';
     if (field === 'table_id' || field === 'table_ids') return tableValue(value, labels);
@@ -107,8 +114,7 @@
       restaurantZones.set(reservation.restaurant_id, null);
     }
     if (reservation && unavailableRestaurants.has(reservation.restaurant_id)) {
-      const seating = detail.querySelector('[data-testid="reservation-tables"]');
-      if (seating) seating.innerHTML = '<strong>Seating:</strong> Table label unavailable';
+      showUnavailableTable(detail);
     }
     const restaurantId = reservation?.restaurant_id || window.__tablekeeperPolishRestaurantId;
     if (match && restaurantId) renderHistory(panel, match, restaurantId);
@@ -165,8 +171,7 @@
       restaurantZones.set(reservation.restaurant_id, null);
     }
     if (detail && reservation && unavailableRestaurants.has(reservation.restaurant_id)) {
-      const seating = detail.querySelector('[data-testid="reservation-tables"]');
-      if (seating) seating.innerHTML = '<strong>Seating:</strong> Table label unavailable';
+      showUnavailableTable(detail);
     }
     const restaurantId = reservation?.restaurant_id || window.__tablekeeperPolishRestaurantId;
     if (panel && reference && sourceEntries.has(reference) && panel.querySelector('.history-list')?.dataset.polished !== 'true') renderHistory(panel, reference, restaurantId);
