@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-03",
+  "commit": "12b85972c0ae01106b282dbe7dc8ce559e57ab93",
+  "packageImage": "tablekeeper-polish-verifier:12b8597",
+  "checks": {
+    "dockerBuild": "passed",
+    "historyDesktop375": "passed",
+    "historyLabelsEventsTerms": "passed for Created and Cancelled; Reassigned renderer independently verified by response fixture on parent commit; mapping unchanged in this commit",
+    "nativeDetailsDisclosureKeyboard": "open/close passed, full JSON present, collapsed by default",
+    "booking": "passed",
+    "recurringSeries": "3 weekly visits created in local container",
+    "individualCancellation": "passed; resulting statuses confirmed, cancelled, confirmed",
+    "tableLabelFallback": "passed with empty current table list",
+    "timestampFallback": {
+      "input": "2030-01-02T10:00:00+02:00",
+      "rendered": "Jan 2, 2030, 10:00 AM (UTC+02:00)",
+      "correct": "passed"
+    },
+    "restaurantMetadataRequestFailure": {
+      "message": "Failed to fetch",
+      "historyPanelCount": 0
+    },
+    "favicon": {
+      "href": "/favicon.svg",
+      "status": 200,
+      "mime": "image/svg+xml",
+      "renderedAt16And32": "passed"
+    },
+    "mobileWidth": {
+      "innerWidth": 375,
+      "scrollWidth": 375
+    },
+    "protectedStageTrees": "unchanged"
+  },
+  "findings": [
+    "When GET /restaurants/{id} fails, lookup returns Failed to fetch and displays no reservation/history panel; fallback still cannot render without restaurant metadata."
+  ],
+  "consoleErrors": [
+    "Failed to load resource: net::ERR_FAILED"
+  ],
+  "screenshots": [
+    "12b8597-history-desktop.png",
+    "12b8597-history-mobile-375.png",
+    "12b8597-series-desktop.png",
+    "12b8597-series-mobile-375.png",
+    "12b8597-cancelled-visit-history.png",
+    "12b8597-fallback-timezone.png",
+    "12b8597-favicon-16px-32px.png"
+  ]
+}

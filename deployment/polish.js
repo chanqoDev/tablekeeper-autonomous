@@ -1,6 +1,8 @@
 (() => {
   const tableLabels = new Map();
   const restaurantZones = new Map();
+  const unavailableRestaurants = new Set();
+  const reservationsByReference = new Map();
   const sourceEntries = new Map();
   let retryRender = null;
   const originalFetch = window.fetch.bind(window);
@@ -10,14 +12,18 @@
     const url = new URL(typeof args[0] === 'string' ? args[0] : args[0].url, location.href);
     const restaurantMatch = url.pathname.match(/^\/restaurants\/([^/]+)$/);
     if (restaurantMatch && response.ok) {
-      response.clone().json().then(data => {
+      try {
+        const data = await response.clone().json();
         tableLabels.set(decodeURIComponent(restaurantMatch[1]), new Map((data.tables || []).map(table => [table.id, table.label])));
         restaurantZones.set(decodeURIComponent(restaurantMatch[1]), data.timezone || null);
-      }).catch(() => {});
+      } catch (_) {}
     }
     const historyMatch = url.pathname.match(/^\/reservations\/([^/]+)\/history$/);
     if (historyMatch && response.ok) {
-      response.clone().json().then(data => sourceEntries.set(decodeURIComponent(historyMatch[1]), data.entries || [])).catch(() => {});
+      try {
+        const data = await response.clone().json();
+        sourceEntries.set(decodeURIComponent(historyMatch[1]), data.entries || []);
+      } catch (_) {}
     }
     return response;
   };
@@ -95,7 +101,12 @@
     if (panel.querySelector('.history-list')?.dataset.polished === 'true') return;
     const reference = detail.querySelector('code')?.textContent?.trim();
     const match = [...sourceEntries.keys()].find(key => key === reference);
-    const restaurantId = window.__tablekeeperPolishRestaurantId;
+    const reservation = reservationsByReference.get(reference);
+    if (reservation && unavailableRestaurants.has(reservation.restaurant_id)) {
+      const seating = detail.querySelector('[data-testid="reservation-tables"]');
+      if (seating) seating.innerHTML = '<strong>Seating:</strong> Table label unavailable';
+    }
+    const restaurantId = reservation?.restaurant_id || window.__tablekeeperPolishRestaurantId;
     if (match && restaurantId) renderHistory(panel, match, restaurantId);
   });
   observer.observe(document.getElementById('main-content') || document.body, {childList:true, subtree:true});
@@ -106,14 +117,49 @@
     const url = new URL(typeof args[0] === 'string' ? args[0] : args[0].url, location.href);
     const reservationMatch = url.pathname.match(/^\/reservations\/([^/]+)$/);
     const response = await apiFetch(...args);
-    if (reservationMatch && response.ok) response.clone().json().then(data => { window.__tablekeeperPolishRestaurantId = data.restaurant_id; }).catch(() => {});
+    if (reservationMatch && response.ok) {
+      try {
+        const data = await response.clone().json();
+        window.__tablekeeperPolishRestaurantId = data.restaurant_id;
+        reservationsByReference.set(data.reference, data);
+      } catch (_) {}
+    }
     return response;
+  };
+
+  const trackedFetch = window.fetch;
+  window.fetch = async (...args) => {
+    const request = args[0];
+    const url = new URL(typeof request === 'string' ? request : request.url, location.href);
+    const restaurantMatch = url.pathname.match(/^\/restaurants\/([^/]+)$/);
+    const method = (args[1]?.method || (typeof request === 'string' ? 'GET' : request.method) || 'GET').toUpperCase();
+    const canFallback = location.pathname === '/lookup' && restaurantMatch && method === 'GET';
+    const fallback = () => {
+      const id = decodeURIComponent(restaurantMatch[1]);
+      unavailableRestaurants.add(id);
+      tableLabels.set(id, new Map());
+      restaurantZones.set(id, null);
+      return new Response(JSON.stringify({id, name:'Restaurant details unavailable', timezone:null, tables:[]}), {status:200,headers:{'Content-Type':'application/json; charset=utf-8'}});
+    };
+    try {
+      const response = await trackedFetch(...args);
+      return canFallback && !response.ok ? fallback() : response;
+    } catch (error) {
+      if (canFallback) return fallback();
+      throw error;
+    }
   };
 
   retryRender = setInterval(() => {
     const panel = document.getElementById('history-panel');
     const detail = document.querySelector('[data-testid="reservation-detail"]');
     const reference = detail?.querySelector('code')?.textContent?.trim();
-    if (panel && reference && sourceEntries.has(reference) && panel.querySelector('.history-list')?.dataset.polished !== 'true') renderHistory(panel, reference, window.__tablekeeperPolishRestaurantId);
+    const reservation = reservationsByReference.get(reference);
+    if (detail && reservation && unavailableRestaurants.has(reservation.restaurant_id)) {
+      const seating = detail.querySelector('[data-testid="reservation-tables"]');
+      if (seating) seating.innerHTML = '<strong>Seating:</strong> Table label unavailable';
+    }
+    const restaurantId = reservation?.restaurant_id || window.__tablekeeperPolishRestaurantId;
+    if (panel && reference && sourceEntries.has(reference) && panel.querySelector('.history-list')?.dataset.polished !== 'true') renderHistory(panel, reference, restaurantId);
   }, 250);
 })();
