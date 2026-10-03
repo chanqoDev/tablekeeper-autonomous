@@ -300,7 +300,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.8) sepia
   .brand { gap: 8px; }
   .brand-mark { width: 34px; height: 34px; }
   .brand-name { font-size: 18px; }
-  .account { gap: 5px; }
+  .account { order: 2; flex: 0 0 100%; width: 100%; justify-content: space-between; gap: 5px; margin-left: 0; }
+  .current-user { max-width: calc(100% - 80px); overflow: visible; overflow-wrap: anywhere; text-overflow: clip; white-space: normal; }
   .account .quiet-link, .account-join, .quiet-button { min-height: 34px; padding-inline: 9px; font-size: 11px; }
   .main-nav { gap: 3px; }
   .main-nav a { padding-inline: 10px; font-size: 12px; }
